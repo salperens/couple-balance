@@ -6,6 +6,7 @@ use App\Actions\Post\CreatePostAction;
 use App\Actions\Post\ListPostsAction;
 use App\Actions\Post\TogglePostLikeAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Post\ListPostRequest;
 use App\Http\Requests\Api\V1\Post\StorePostRequest;
 use App\Http\Resources\Api\V1\PostResource;
 use App\Http\Responses\Api\V1\Post\PostLikeResponse;
@@ -24,9 +25,9 @@ final class PostController extends Controller
     {
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(ListPostRequest $request): AnonymousResourceCollection
     {
-        $paginator = $this->listPostsAction->execute();
+        $paginator = $this->listPostsAction->execute($request->toData());
 
         return PostResource::collection($paginator);
     }
