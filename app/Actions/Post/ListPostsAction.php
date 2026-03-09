@@ -19,6 +19,7 @@ final readonly class ListPostsAction
     {
         $query = Post::query()
             ->with(['user', 'categories'])
+            ->withCount(['likes', 'comments'])
             ->orderByDesc('created_at');
 
         $categoryIds = $this->request->input('category_ids');

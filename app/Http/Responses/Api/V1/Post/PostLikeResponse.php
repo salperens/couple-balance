@@ -12,7 +12,7 @@ final class PostLikeResponse
     {
         return response()->json(
             [
-                'liked' => $state->liked,
+                'liked'       => $state->liked,
                 'likes_count' => $state->likesCount,
             ],
             Response::HTTP_OK,

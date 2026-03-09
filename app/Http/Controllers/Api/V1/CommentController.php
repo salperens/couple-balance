@@ -9,16 +9,19 @@ use App\Http\Requests\Api\V1\Comment\StoreCommentRequest;
 use App\Http\Resources\Api\V1\CommentResource;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Symfony\Component\HttpFoundation\Response;
 
 final class CommentController extends Controller
 {
     public function __construct(
         private readonly ListPostCommentsAction $listPostCommentsAction,
-        private readonly CreateCommentAction $createCommentAction,
-    ) {
+        private readonly CreateCommentAction    $createCommentAction,
+    )
+    {
     }
 
-    public function index(Post $post)
+    public function index(Post $post): AnonymousResourceCollection
     {
         $paginator = $this->listPostCommentsAction->execute($post);
 
@@ -31,6 +34,6 @@ final class CommentController extends Controller
 
         return (new CommentResource($comment->load('user')))
             ->response()
-            ->setStatusCode(201);
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 }

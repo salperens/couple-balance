@@ -14,15 +14,17 @@ class PostResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'slug' => $this->slug,
-            'body' => $this->body,
-            'is_anonymous' => (bool) $this->is_anonymous,
-            'author_name' => $this->is_anonymous ? 'Anonim' : ($this->user->name ?? null),
-            'categories' => CategoryResource::collection($this->whenLoaded('categories')),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'id'             => $this->id,
+            'title'          => $this->title,
+            'slug'           => $this->slug,
+            'body'           => $this->body,
+            'is_anonymous'   => $this->is_anonymous,
+            'author_name'    => $this->is_anonymous ? 'Anonim' : ($this->user->name ?? null),
+            'likes_count'    => $this->likes_count ?? 0,
+            'comments_count' => $this->comments_count ?? 0,
+            'categories'     => CategoryResource::collection($this->whenLoaded('categories')),
+            'created_at'     => $this->created_at,
+            'updated_at'     => $this->updated_at,
         ];
     }
 }
