@@ -19,6 +19,21 @@ class User extends Authenticatable
         return $this->hasMany(Device::class);
     }
 
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function postLikes(): HasMany
+    {
+        return $this->hasMany(PostLike::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *
