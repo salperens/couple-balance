@@ -1,33 +1,9 @@
-FROM php:8.4-fpm-alpine AS dependencies
+FROM php:8.4-fpm-alpine
 
 RUN apk add --no-cache \
     git \
     curl \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libzip-dev \
-    zlib-dev \
-    oniguruma-dev \
-    libxml2-dev \
-    $PHPIZE_DEPS \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    zip \
-    opcache \
-    && docker-php-ext-enable opcache
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-FROM php:8.4-fpm-alpine
-
-RUN apk add --no-cache \
+    netcat-openbsd \
     libpng \
     libjpeg-turbo \
     freetype \
@@ -35,28 +11,7 @@ RUN apk add --no-cache \
     zlib \
     oniguruma \
     libxml2 \
-    netcat-openbsd \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libzip-dev \
-    zlib-dev \
-    oniguruma-dev \
-    libxml2-dev \
-    $PHPIZE_DEPS \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    zip \
-    opcache \
-    && pecl install pcov \
-    && docker-php-ext-enable opcache pcov \
-    && apk del --no-cache \
+    && apk add --no-cache --virtual .build-deps \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
@@ -66,7 +21,20 @@ RUN apk add --no-cache \
     libxml2-dev \
     $PHPIZE_DEPS
 
-RUN chmod 1777 /tmp
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo_mysql \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        zip \
+        opcache
+
+RUN apk del .build-deps
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY docker/php/php.ini /usr/local/etc/php/php.ini
 COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
@@ -74,21 +42,18 @@ COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY docker/php/healthcheck.sh /usr/local/bin/php-fpm-healthcheck
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
+RUN chmod +x /usr/local/bin/php-fpm-healthcheck \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh
+
 WORKDIR /var/www/html
 
-RUN addgroup -g 1000 -S www && \
-    adduser -u 1000 -S www -G www && \
-    chmod +x /usr/local/bin/php-fpm-healthcheck && \
-    chmod +x /usr/local/bin/docker-entrypoint.sh
+COPY . .
 
-COPY --chown=www:www . /var/www/html
+RUN mkdir -p storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-COPY --from=dependencies /usr/bin/composer /usr/bin/composer
-
-RUN chown -R www:www /var/www/html && \
-    chmod -R 755 /var/www/html && \
-    chmod -R 775 /var/www/html/storage && \
-    chmod -R 775 /var/www/html/bootstrap/cache
+RUN chmod 1777 /tmp
 
 EXPOSE 9000
 
