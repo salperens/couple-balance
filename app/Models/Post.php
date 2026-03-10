@@ -62,7 +62,6 @@ class Post extends Model
         return $this->hasMany(Comment::class)->whereNull('parent_id');
     }
 
-    /** Tüm yorumlar (üst seviye + cevaplar) */
     public function allComments(): HasMany
     {
         return $this->hasMany(Comment::class);
