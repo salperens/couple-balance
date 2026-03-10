@@ -66,6 +66,9 @@ RUN apk add --no-cache \
     libxml2-dev \
     $PHPIZE_DEPS
 
+RUN chmod 1777 /tmp
+RUN chown -R www:www /var/www/html/storage /var/www/html/bootstrap/cache
+
 COPY docker/php/php.ini /usr/local/etc/php/php.ini
 COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
