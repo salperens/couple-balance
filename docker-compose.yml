@@ -76,6 +76,20 @@ services:
       retries: 10
       start_period: 60s
 
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: couple-balance-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: couple-balance-mysql
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - couple-balance-network
+
 networks:
   couple-balance-network:
     driver: bridge
