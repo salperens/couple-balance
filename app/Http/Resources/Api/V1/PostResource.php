@@ -17,7 +17,9 @@ class PostResource extends JsonResource
             'id'             => $this->id,
             'title'          => $this->title,
             'slug'           => $this->slug,
-            'body'           => $this->body,
+            'body'           => strlen($this->body) > 100
+                ? substr($this->body, '0', '100') . '...'
+                : $this->body,
             'is_liked'       => $this->is_liked,
             'is_anonymous'   => $this->is_anonymous,
             'author_name'    => $this->is_anonymous ? 'Anonim' : ($this->user->name ?? null),
