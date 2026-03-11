@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources\Api\V1;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin \App\Models\Post */
+/** @mixin Post */
 class PostResource extends JsonResource
 {
     /**
@@ -29,7 +30,7 @@ class PostResource extends JsonResource
         ];
     }
 
-    private function getBody(): ?string
+    protected function getBody(): ?string
     {
         if (strlen($this->body) < 100) {
             return $this->body;

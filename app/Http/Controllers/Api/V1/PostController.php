@@ -8,12 +8,13 @@ use App\Actions\Post\TogglePostLikeAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Post\ListPostRequest;
 use App\Http\Requests\Api\V1\Post\StorePostRequest;
+use App\Http\Resources\Api\V1\PostDetailResource;
 use App\Http\Resources\Api\V1\PostResource;
 use App\Http\Responses\Api\V1\Post\PostLikeResponse;
 use App\Models\Post;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 final class PostController extends Controller
@@ -32,6 +33,20 @@ final class PostController extends Controller
 
 
         return PostResource::collection($paginator);
+    }
+
+    public function show(Post $post, Request $request): PostResource
+    {
+        $userId = $request->user()?->id;
+
+        $post->load(['user', 'categories'])
+            ->loadCount(['likes', 'comments']);
+
+        $post->is_liked = $post->likes()
+            ->where('user_id', $userId)
+            ->exists();
+
+        return new PostDetailResource($post);
     }
 
     public function store(StorePostRequest $request): JsonResponse

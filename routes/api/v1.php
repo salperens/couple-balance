@@ -15,6 +15,7 @@ Route::get('categories', [CategoryController::class, 'index'])->name('categories
 
 Route::prefix('posts')->name('posts.')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('index')->middleware('optional.auth');
+    Route::get('/{post}', [PostController::class, 'show'])->name('show')->middleware('optional.auth');
     Route::get('{post}/comments', [CommentController::class, 'index'])->name('comments.index');
 
     Route::middleware('auth:sanctum')->group(function () {
