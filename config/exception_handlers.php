@@ -1,0 +1,20 @@
+<?php
+
+use App\Exceptions\Handlers\ValidationExceptionHandler;
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Exception Handlers
+    |--------------------------------------------------------------------------
+    |
+    | This array defines the exception handlers that will be registered
+    | in the application. Handlers are processed in order, and the first
+    | handler that can handle an exception will be used.
+    |
+    */
+
+    'handlers' => [
+        ValidationExceptionHandler::class,
+    ],
+];

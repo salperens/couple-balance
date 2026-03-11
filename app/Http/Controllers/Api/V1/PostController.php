@@ -13,6 +13,7 @@ use App\Http\Responses\Api\V1\Post\PostLikeResponse;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 final class PostController extends Controller
@@ -27,7 +28,8 @@ final class PostController extends Controller
 
     public function index(ListPostRequest $request): AnonymousResourceCollection
     {
-        $paginator = $this->listPostsAction->execute($request->toData());
+        $paginator = $this->listPostsAction->execute($request->toData(), $request->user() ?? null);
+
 
         return PostResource::collection($paginator);
     }

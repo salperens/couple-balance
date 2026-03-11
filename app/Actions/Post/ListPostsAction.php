@@ -6,6 +6,7 @@ namespace App\Actions\Post;
 
 use App\Data\Post\ListPostRequestData;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -18,8 +19,9 @@ final readonly class ListPostsAction
     {
     }
 
-    public function execute(?ListPostRequestData $requestData = null): Paginator
+    public function execute(?ListPostRequestData $requestData = null, ?User $user = null): Paginator
     {
+        $userId = $user?->id;
 
         $query = Post::query()
             ->with(['user', 'categories'])
@@ -32,6 +34,9 @@ final readonly class ListPostsAction
                     );
                 }
             )
+            ->withExists([
+                'likes as is_liked' => fn ($q) => $q->where('user_id', $userId)
+            ])
             ->withCount(['likes', 'comments'])
             ->orderByDesc('created_at');
 
