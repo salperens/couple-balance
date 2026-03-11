@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\Handlers\DefaultExceptionHandler;
 use App\Exceptions\Handlers\ValidationExceptionHandler;
 
 return [
@@ -16,5 +17,6 @@ return [
 
     'handlers' => [
         ValidationExceptionHandler::class,
+        DefaultExceptionHandler::class,
     ],
 ];
