@@ -17,9 +17,7 @@ class PostResource extends JsonResource
             'id'             => $this->id,
             'title'          => $this->title,
             'slug'           => $this->slug,
-            'body'           => strlen($this->body) > 100
-                ? substr($this->body, '0', '100') . '...'
-                : $this->body,
+            'body'           => $this->getBody(),
             'is_liked'       => $this->is_liked,
             'is_anonymous'   => $this->is_anonymous,
             'author_name'    => $this->is_anonymous ? 'Anonim' : ($this->user->name ?? null),
@@ -29,6 +27,15 @@ class PostResource extends JsonResource
             'created_at'     => $this->created_at,
             'updated_at'     => $this->updated_at,
         ];
+    }
+
+    private function getBody(): ?string
+    {
+        if (strlen($this->body) < 100) {
+            return $this->body;
+        }
+
+        return rtrim(substr($this->body, 0, 100)) . '...';
     }
 }
 
