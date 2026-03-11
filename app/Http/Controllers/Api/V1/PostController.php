@@ -31,7 +31,6 @@ final class PostController extends Controller
     {
         $paginator = $this->listPostsAction->execute($request->toData(), $request->user() ?? null);
 
-
         return PostResource::collection($paginator);
     }
 

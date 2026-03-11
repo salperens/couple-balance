@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4618607bcda04ed5d344b801886317e",
+    "content-hash": "efc77fd8fdb040e70e6d70091e2a9d1e",
     "packages": [
         {
             "name": "brick/math",
@@ -2129,6 +2129,61 @@
                 }
             ],
             "time": "2026-01-15T06:54:53+00:00"
+        },
+        {
+            "name": "metin/laravel-turkce",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/metinbolat/laravel-turkce.git",
+                "reference": "6da81933a2a5198a6c94b372812cb9b07b5611c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/metinbolat/laravel-turkce/zipball/6da81933a2a5198a6c94b372812cb9b07b5611c2",
+                "reference": "6da81933a2a5198a6c94b372812cb9b07b5611c2",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaravelTr\\AppServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LaravelTr\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Metin",
+                    "email": "metinnbolatt@gmail.com"
+                }
+            ],
+            "description": "Laravel Türkçe dil dosyaları",
+            "keywords": [
+                "Turkish",
+                "language",
+                "laravel",
+                "localization",
+                "translation",
+                "turkce"
+            ],
+            "support": {
+                "issues": "https://github.com/metinbolat/laravel-turkce/issues",
+                "source": "https://github.com/metinbolat/laravel-turkce/tree/v1.1.0"
+            },
+            "time": "2025-03-09T21:14:52+00:00"
         },
         {
             "name": "monolog/monolog",

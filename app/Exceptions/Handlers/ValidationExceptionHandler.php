@@ -44,7 +44,7 @@ final class ValidationExceptionHandler implements ExceptionHandler
         return new ErrorResponseData(
             new ErrorDetailData(
                 'VALIDATION_ERROR',
-                'The given data was invalid.',
+                'Girilen veriler doğrulanırken hatalar oluştu.',
                 new DataCollection(ErrorDetailItemData::class, $errorDetailItems),
             ),
             new MetaData(
