@@ -109,7 +109,7 @@ services:
     image: opensearchproject/opensearch-dashboards:2.13.0
     container_name: couple-balance-dashboards
     environment:
-      - OPENSEARCH_HOSTS=http://opensearch:9200
+      - OPENSEARCH_HOSTS=https://opensearch:9200
     ports:
       - "5601:5601"
     networks:
