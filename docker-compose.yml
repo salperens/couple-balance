@@ -110,6 +110,7 @@ services:
     container_name: couple-balance-dashboards
     environment:
       - OPENSEARCH_HOSTS=https://opensearch:9200
+      - OPENSEARCH_SSL_VERIFICATIONMODE=none
     ports:
       - "5601:5601"
     networks:
