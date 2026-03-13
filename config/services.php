@@ -34,5 +34,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'opensearch' => [
+        'host' => env('OPENSEARCH_HOST', 'opensearch'),
+        'port' => env('OPENSEARCH_PORT', 9200),
+        'scheme' => env('OPENSEARCH_SCHEME', 'https'),
+        'user' => env('OPENSEARCH_USER', 'admin'),
+        'pass' => env('OPENSEARCH_PASSWORD'),
+    ],
 
 ];
