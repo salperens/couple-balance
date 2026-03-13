@@ -11,6 +11,7 @@ RUN apk add --no-cache \
     zlib \
     oniguruma \
     libxml2 \
+    curl-dev \
     && apk add --no-cache --virtual .build-deps \
     libpng-dev \
     libjpeg-turbo-dev \
@@ -30,7 +31,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         bcmath \
         gd \
         zip \
-        opcache
+        opcache \
+        curl
 
 RUN apk del .build-deps
 
