@@ -12,4 +12,9 @@ final class UserProfileException extends Exception
     {
         return new self('Profile already exists');
     }
+
+    public static function profileNotFoundForUser(): self
+    {
+        return new self("Profile not found for user");
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Api\V1\UserProfile;
 
 
+use App\Data\UserProfile\UserProfileData;
 use App\Enums\GenderEnum;
 use App\Enums\OrientationEnum;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,5 +25,10 @@ class UpdateUserProfileRequest extends FormRequest
             'gender'      => ['sometimes', new Enum(GenderEnum::class)],
             'orientation' => ['sometimes', new Enum(OrientationEnum::class)],
         ];
+    }
+
+    public function toData(): UserProfileData
+    {
+        return UserProfileData::from($this->validated());
     }
 }
