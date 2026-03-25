@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\PostController;
+use App\Http\Controllers\Api\V1\UserProfileController;
 use App\Services\OpenSearchService;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,14 @@ Route::prefix('posts')->name('posts.')->group(function () {
         Route::post('{post}/comments', [CommentController::class, 'store'])->name('comments.store');
     });
 });
+
+Route::prefix('profile')
+    ->middleware('auth:sanctum')
+    ->group(function () {
+        Route::get('/', [UserProfileController::class, 'show']);
+        Route::post('/', [UserProfileController::class, 'store']);
+        Route::put('/', [UserProfileController::class, 'update']);
+    });
 
 Route::get('/os-test', function (OpenSearchService $os) {
     return $os->client()->info();
