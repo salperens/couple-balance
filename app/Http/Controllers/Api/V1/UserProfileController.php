@@ -18,6 +18,10 @@ class UserProfileController extends Controller
     {
         $profile = $request->user()->profile;
 
+        if (!$profile) {
+            abort(404, 'Profile not found');
+        }
+
         return ProfileResource::make($profile);
     }
 
