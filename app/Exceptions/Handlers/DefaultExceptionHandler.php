@@ -54,14 +54,32 @@ class DefaultExceptionHandler implements ExceptionHandler
             $this->statusCode = $exception->getStatusCode();
         }
 
-        if ($this->isCodeValid($exception->getCode())) {
-            $this->statusCode = $exception->getCode();
+        $exceptionCode = $this->normalizeExceptionHttpCode($exception->getCode());
+        if ($exceptionCode !== null) {
+            $this->statusCode = $exceptionCode;
         }
     }
 
     public function getStatusCode(): int
     {
         return $this->statusCode;
+    }
+
+    /**
+     * Exception::getCode() is not always int across extensions; only map numeric 4xx–5xx to HTTP status.
+     */
+    private function normalizeExceptionHttpCode(mixed $code): ?int
+    {
+        if (is_string($code)) {
+            if ($code === '' || !ctype_digit($code)) {
+                return null;
+            }
+            $code = (int) $code;
+        } elseif (!is_int($code)) {
+            return null;
+        }
+
+        return $this->isCodeValid($code) ? $code : null;
     }
 
     private function isCodeValid(int $code): bool

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\AiAssistantMessage;
 
 /**
  * @property int $id
@@ -26,6 +27,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Collection|Post[] $posts
  * @property Collection|Comment[] $comments
  * @property Collection|PostLike[] $postLikes
+ * @property Collection|AiAssistantMessage[] $aiAssistantMessages
  */
 class User extends Authenticatable
 {
@@ -50,6 +52,11 @@ class User extends Authenticatable
     public function postLikes(): HasMany
     {
         return $this->hasMany(PostLike::class);
+    }
+
+    public function aiAssistantMessages(): HasMany
+    {
+        return $this->hasMany(AiAssistantMessage::class);
     }
 
     /**

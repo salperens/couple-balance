@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AiAssistantMessageController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CommentController;
@@ -33,6 +34,15 @@ Route::prefix('profile')
         Route::get('/', [UserProfileController::class, 'show']);
         Route::post('/', [UserProfileController::class, 'store']);
         Route::put('/', [UserProfileController::class, 'update']);
+    });
+
+Route::prefix('ai-assistant')
+    ->middleware('auth:sanctum')
+    ->group(function () {
+        Route::get('messages', [AiAssistantMessageController::class, 'index'])
+            ->name('ai-assistant.messages.index');
+        Route::post('messages', [AiAssistantMessageController::class, 'store'])
+            ->name('ai-assistant.messages.store');
     });
 
 Route::get('/os-test', function (OpenSearchService $os) {
