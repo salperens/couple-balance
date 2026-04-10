@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api\V1\AiAssistant;
 
+use App\Support\AiAssistant\AiAssistantLimits;
 use App\Support\AiAssistantMessageCursor;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,17 +23,24 @@ class ListAiAssistantMessagesRequest extends FormRequest
      */
     public function rules(): array
     {
+        $min = (int) config('ai_assistant.limits.min_page_size', AiAssistantLimits::MIN_PAGE_SIZE);
+        $max = (int) config('ai_assistant.limits.max_page_size', AiAssistantLimits::MAX_PAGE_SIZE);
+
         return [
-            'limit'  => 'sometimes|integer|min:1|max:50',
+            'limit' => 'sometimes|integer|min:'.$min.'|max:'.$max,
             'cursor' => 'sometimes|nullable|string',
         ];
     }
 
     public function limitValue(): int
     {
-        $v = (int)$this->input('limit', 20);
+        $default = (int) config('ai_assistant.limits.default_page_size', AiAssistantLimits::DEFAULT_PAGE_SIZE);
+        $min = (int) config('ai_assistant.limits.min_page_size', AiAssistantLimits::MIN_PAGE_SIZE);
+        $max = (int) config('ai_assistant.limits.max_page_size', AiAssistantLimits::MAX_PAGE_SIZE);
 
-        return $v >= 1 && $v <= 50 ? $v : 20;
+        $v = (int) $this->input('limit', $default);
+
+        return $v >= $min && $v <= $max ? $v : $default;
     }
 
     public function beforeMessageId(): ?int
@@ -46,7 +54,7 @@ class ListAiAssistantMessagesRequest extends FormRequest
             return AiAssistantMessageCursor::decode($cursor)['lastMessageId'];
         } catch (InvalidArgumentException) {
             throw ValidationException::withMessages([
-                'cursor' => ['Geçersiz cursor.'],
+                'cursor' => [(string) config('ai_assistant.validation.invalid_cursor')],
             ]);
         }
     }

@@ -4,28 +4,33 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\AiAssistant\EnsureDefaultWelcomeMessageAction;
 use App\Actions\AiAssistant\ListAiAssistantMessagesAction;
 use App\Actions\AiAssistant\PostAiAssistantMessageAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\AiAssistant\ListAiAssistantMessagesRequest;
 use App\Http\Requests\Api\V1\AiAssistant\StoreAiAssistantMessageRequest;
 use App\Models\AiAssistantMessage;
+use App\Models\User;
+use App\Support\AiAssistant\AiAssistantLimits;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AiAssistantMessageController extends Controller
 {
     public function __construct(
+        private readonly EnsureDefaultWelcomeMessageAction $ensureDefaultWelcomeMessageAction,
         private readonly ListAiAssistantMessagesAction $listAiAssistantMessagesAction,
         private readonly PostAiAssistantMessageAction $postAiAssistantMessageAction,
-    ) {
-    }
+    ) {}
 
     public function index(ListAiAssistantMessagesRequest $request): JsonResponse
     {
         $user = $request->user();
         $limit = $request->limitValue();
         $beforeId = $request->beforeMessageId();
+
+        $this->ensureDefaultWelcomeMessageAction->execute($user, $beforeId);
 
         $payload = $this->listAiAssistantMessagesAction->execute($user, $limit, $beforeId);
 
@@ -36,11 +41,11 @@ final class AiAssistantMessageController extends Controller
         return response()->json([
             'messages' => $payload['messages']->map(fn (AiAssistantMessage $m) => $this->messageToArray($m))->values()->all(),
             'pagination' => [
-                'hasMore'     => $payload['hasMore'],
-                'nextCursor'  => $payload['nextCursor'],
-                'nextUrl'     => $nextUrl,
+                'hasMore' => $payload['hasMore'],
+                'nextCursor' => $payload['nextCursor'],
+                'nextUrl' => $nextUrl,
             ],
-            'chatState' => $this->mockChatState($payload['messageCount']),
+            'chatState' => $this->chatState($user, $payload['messageCount']),
         ]);
     }
 
@@ -52,7 +57,7 @@ final class AiAssistantMessageController extends Controller
         );
 
         return response()->json([
-            'userMessage'      => $this->messageToArray($created['user']),
+            'userMessage' => $this->messageToArray($created['user']),
             'assistantMessage' => $this->messageToArray($created['assistant']),
         ], Response::HTTP_CREATED);
     }
@@ -63,21 +68,28 @@ final class AiAssistantMessageController extends Controller
     private function messageToArray(AiAssistantMessage $message): array
     {
         return [
-            'id'        => $message->id,
-            'type'      => $message->type,
-            'text'      => $message->text,
+            'id' => $message->id,
+            'type' => $message->type,
+            'text' => $message->text,
             'createdAt' => $message->created_at->clone()->utc()->format('Y-m-d\TH:i:s\Z'),
         ];
     }
 
     private function buildMessagesUrl(int $limit, string $cursor): string
     {
+        $path = $this->messagesApiPath();
+
         $query = http_build_query([
-            'limit'  => $limit,
+            'limit' => $limit,
             'cursor' => $cursor,
         ]);
 
-        return '/ai-assistant/messages?'.$query;
+        return $path.'?'.$query;
+    }
+
+    private function messagesApiPath(): string
+    {
+        return (string) config('ai_assistant.api.messages_path', '/ai-assistant/messages');
     }
 
     /**
@@ -89,16 +101,20 @@ final class AiAssistantMessageController extends Controller
      *     summaryCreated: bool
      * }
      */
-    private function mockChatState(int $messageCount): array
+    private function chatState(User $user, int $messageCount): array
     {
-        $mod = $messageCount % 10;
+        $interval = (int) config('ai_assistant.limits.summary_interval', AiAssistantLimits::SUMMARY_INTERVAL);
+        $interval = $interval > 0 ? $interval : AiAssistantLimits::SUMMARY_INTERVAL;
+
+        $mod = $messageCount % $interval;
+        $hasSummary = $user->aiAssistantChatSummary()->exists();
 
         return [
-            'messageCount'                => $messageCount,
-            'remainingUntilNextSummary' => $mod === 0 ? 10 : 10 - $mod,
-            'topic'                       => 'relationship_conflict',
-            'emotion'                     => 'neutral',
-            'summaryCreated'              => false,
+            'messageCount' => $messageCount,
+            'remainingUntilNextSummary' => $mod === 0 ? $interval : $interval - $mod,
+            'topic' => (string) config('ai_assistant.chat_state.default_topic'),
+            'emotion' => (string) config('ai_assistant.chat_state.default_emotion'),
+            'summaryCreated' => $hasSummary,
         ];
     }
 }

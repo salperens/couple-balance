@@ -11,7 +11,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\AiAssistantMessage;
 
 /**
  * @property int $id
@@ -28,6 +27,7 @@ use App\Models\AiAssistantMessage;
  * @property Collection|Comment[] $comments
  * @property Collection|PostLike[] $postLikes
  * @property Collection|AiAssistantMessage[] $aiAssistantMessages
+ * @property AiAssistantChatSummary|null $aiAssistantChatSummary
  */
 class User extends Authenticatable
 {
@@ -57,6 +57,11 @@ class User extends Authenticatable
     public function aiAssistantMessages(): HasMany
     {
         return $this->hasMany(AiAssistantMessage::class);
+    }
+
+    public function aiAssistantChatSummary(): HasOne
+    {
+        return $this->hasOne(AiAssistantChatSummary::class);
     }
 
     /**
@@ -89,7 +94,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'password' => 'hashed',
         ];
     }
 
