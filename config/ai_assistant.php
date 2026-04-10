@@ -32,4 +32,18 @@ return [
         'messages_config_key' => 'relationship_coach.welcome_messages',
     ],
 
+    'debug_reply' => [
+        'enabled' => env('AI_ASSISTANT_DEBUG_REPLY', false),
+        'mock_replies' => [
+            'Bunu duyduğuma üzüldüm; burada olduğunu bil.',
+            'Duygularını paylaştığın için teşekkürler. Birlikte üzerinde düşünebiliriz.',
+            'Bu sana ağır gelmiş olabilir. Nefes almana izin ver.',
+            'Kendine karşı nazik olmayı dene; bu zor bir süreç.',
+            'Şu an için küçük bir adım bile yeterli olabilir.',
+            'İletişimde neyin seni zorladığını biraz daha açmak ister misin?',
+            'Hissettiklerinin geçerli olduğunu hatırlatayım.',
+            'İstersen bir sonraki mesajında tek bir cümleyle devam edebilirsin.',
+        ],
+    ],
+
 ];

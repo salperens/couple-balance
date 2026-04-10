@@ -15,6 +15,15 @@ class StoreAiAssistantMessageRequest extends FormRequest
         return true;
     }
 
+    public function wantsDebugAssistantSimulation(): bool
+    {
+        if (! (bool)config('ai_assistant.debug_reply.enabled', false)) {
+            return false;
+        }
+
+        return $this->boolean('debug');
+    }
+
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
      */

@@ -51,9 +51,12 @@ final class AiAssistantMessageController extends Controller
 
     public function store(StoreAiAssistantMessageRequest $request): JsonResponse
     {
+        $simulate = $request->wantsDebugAssistantSimulation();
+
         $created = $this->postAiAssistantMessageAction->execute(
             $request->user(),
-            $request->validated('text')
+            $request->validated('text'),
+            $simulate,
         );
 
         return response()->json([
