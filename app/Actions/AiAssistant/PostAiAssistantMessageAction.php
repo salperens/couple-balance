@@ -31,6 +31,7 @@ final readonly class PostAiAssistantMessageAction
         ]);
 
         if ($simulateAssistant) {
+            sleep(3);
             $assistantText = $this->randomDebugReply();
         } else {
             $rollingSummary = $user->aiAssistantChatSummary?->summary;
